@@ -1,0 +1,13 @@
+twig:
+    file_name_pattern: '*.twig'
+    debug: '%kernel.debug%'
+    form_themes:
+        - "@Common/form.html.twig"
+    globals:
+        config: '@SchulIT\CommonBundle\Twig\ConfigVariable'
+        #user: '@App\Twig\UserVariable'
+        profile_url: "%env(IDP_PROFILE_URL)%"
+
+when@test:
+    twig:
+        strict_variables: true

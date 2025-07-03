@@ -1,0 +1,62 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'books.add.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('books') }}">{{ 'books.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }} </li>
+    </ol>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="{{ asset('build/import.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <div class="row">
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header">{{ 'label.general'|trans }}</div>
+                <div class="card-body">
+                    {{ form_widget(form) }}
+
+                    <img id="image_preview" src="#" alt="{{ 'label.preview'|trans }}" style="max-width: 300px;">
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button type="submit" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus"></i> {{ 'actions.add'|trans }}
+                </button>
+
+                <a href="{{ path('books') }}" class="btn btn-sm btn-secondary">
+                    {{ 'actions.cancel'|trans }}
+                </a>
+            </div>
+            {{ form_end(form) }}
+
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ 'books.add.import.label'|trans }}</h5>
+                    <p>{{ 'books.add.import.help'|trans }}</p>
+
+                    <input type="text" name="isbn" class="form-control" id="isbn-input">
+                </div>
+                <div class="card-footer">
+                    <button type="button" class="btn btn-primary btn-sm" id="isbn-import-btn" data-url="{{ path('xhr_crawl_book', { isbn: 'isbn'}) }}">
+                        <i class="fas fa-cloud-download"></i> {{ 'actions.import'|trans }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

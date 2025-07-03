@@ -1,0 +1,120 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'borrowers.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('borrowers') }}">{{ 'borrowers.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ borrower.lastname }}, {{ borrower.firstname }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header">{{ 'checkouts.active.label'|trans }}</div>
+                {% if activeCheckouts|length == 0 %}
+                    <div class="card-body">
+                        <div class="bs-callout bs-callout-info my-0">
+                            <h5>{{ 'info.label'|trans }}</h5>
+                            <p>{{ 'checkouts.active.empty'|trans }}</p>
+                        </div>
+                    </div>
+                {% else %}
+                <div class="list-group list-group-flush">
+                    {% for checkout in activeCheckouts %}
+                        {% set book = checkout.bookCopy.book %}
+                        <div class="list-group-item d-flex">
+                            {% if book.hasCover %}
+                                <img src="{{ vich_uploader_asset(book, 'cover') }}" style="max-width: 50px;" class="me-2">
+                            {% endif %}
+
+                            <div class="flex-fill">
+                                <p class="mb-1">
+                                    <a href="{{ path('book_copy', { uuid: checkout.bookCopy.uuid}) }}">{{ book.title }}</a>
+                                    <span class="badge text-bg-primary"><i class="fas fa-barcode"></i> {{ checkout.bookCopy.barcodeId }}</span>
+
+                                    {% if book.subtitle is not empty %}
+                                        <span class="text-muted d-block">{{ book.subtitle }}</span>
+                                    {% endif %}
+                                </p>
+                                <p class="mb-0">
+                                    <i class="fas fa-calendar-alt"></i> <i class="fas fa-arrow-right"></i> {{ checkout.start|format_datetime }}
+                                </p>
+                            </div>
+
+                            <div class="buttons">
+                                <a href="{{ path('return_copy', { uuid: checkout.bookCopy.uuid }) }}" class="btn btn-primary btn-sm">{{ 'actions.return'|trans }}</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="card">
+                <div class="card-header">{{ 'checkouts.past.label'|trans }}</div>
+                {% if pastCheckouts|length == 0 %}
+                    <div class="card-body">
+                        <div class="bs-callout bs-callout-info my-0">
+                            <h5>{{ 'info.label'|trans }}</h5>
+                            <p>{{ 'checkouts.past.empty'|trans }}</p>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="list-group list-group-flush">
+                        {% for checkout in pastCheckouts %}
+                            {% set book = checkout.bookCopy.book %}
+                            <div class="list-group-item d-flex">
+                                {% if book.hasCover %}
+                                    <img src="{{ vich_uploader_asset(book, 'cover') }}" style="max-width: 50px;" class="me-2">
+                                {% endif %}
+
+                                <div class="flex-fill">
+                                    <p class="mb-1">
+                                        <a href="{{ path('book_copy', { uuid: checkout.bookCopy.uuid}) }}">{{ book.title }}</a>
+                                        <span class="badge text-bg-primary"><i class="fas fa-barcode"></i> {{ checkout.bookCopy.barcodeId }}</span>
+                                        {% if book.subtitle is not empty %}
+                                            <span class="text-muted d-block">{{ book.subtitle }}</span>
+                                        {% endif %}
+                                    </p>
+                                    <p class="mb-1">
+                                        <i class="fas fa-calendar-alt"></i> <i class="fas fa-arrow-right"></i> {{ checkout.start|format_datetime }}
+                                    </p>
+                                    <p class="mb-0">
+                                        <i class="fas fa-calendar-alt"></i> <i class="fas fa-arrow-left"></i> {{ checkout.end|format_datetime }}
+                                    </p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-3 sticky-sidebar">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-contact-card"></i> {{ borrower.lastname }}, {{ borrower.firstname }}
+                    </h5>
+
+                    <p>
+                        <span class="badge text-bg-primary">{{ borrower.type|trans }}</span>
+                    </p>
+
+                    <p>
+                        <i class="fas fa-at"></i> <a href="mailto:{{ borrower.email }}">{{ borrower.email }}</a>
+                    </p>
+                    {% if borrower.grade is not empty %}
+                    <p class="mb-0">
+                        <i class="fas fa-chalkboard"></i> {{ borrower.grade }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

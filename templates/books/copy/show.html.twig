@@ -1,0 +1,161 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('books') }}">{{ 'books.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('show_book', { uuid: book.uuid}) }}">{{ book.title }}</a></li>
+        <li class="breadcrumb-item"><span class="badge text-bg-primary">{{ copy.barcodeId }}</span></li>
+        <li class="breadcrumb-item">{{ 'books.copies.show.label'|trans }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-0">
+        <div class="row">
+            <div class="col-md-9">
+                {% if not copy.canCheckout %}
+                    <div class="bs-callout bs-callout-danger mt-0">
+                        <h5>{{ 'books.copies.cannot_checkout'|trans }}</h5>
+                        <p>{{ copy.comment }}</p>
+                    </div>
+                {% elseif copy.comment is not empty %}
+                    <div class="bs-callout bs-callout-info mt-0">
+                        <p>{{ copy.comment }}</p>
+                    </div>
+                {% endif %}
+
+                <div class="card">
+                    <div class="card-header">{{ 'checkouts.active.label'|trans }}</div>
+                    {% if activeCheckouts|length == 0 %}
+                        <div class="card-body">
+                            <div class="bs-callout bs-callout-info my-0">
+                                <h5>{{ 'info.label'|trans }}</h5>
+                                <p>{{ 'checkouts.active.empty'|trans }}</p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="list-group list-group-flush">
+                            {% for checkout in activeCheckouts %}
+                                <div class="list-group-item d-flex">
+                                    <div class="flex-fill">
+                                        <p class="mb-1">
+                                            {% if checkout.borrower is not null %}
+                                                <a href="{{ path('show_borrower', { uuid: checkout.borrower.uuid}) }}">
+                                                    {{ checkout.borrower.lastname }}, {{ checkout.borrower.firstname }}
+                                                </a>
+
+                                                {% if checkout.borrower.grade is not empty %}
+                                                    <span class="text-muted d-block">{{ checkout.borrower.grade }}</span>
+                                                {% endif %}
+                                            {% else %}
+                                                {{ 'user.removed'|trans }}
+                                            {% endif %}
+                                        </p>
+                                        <p class="mb-0">
+                                            <i class="fas fa-calendar-alt"></i> <i class="fas fa-arrow-right"></i> {{ checkout.start|format_datetime }}
+                                        </p>
+                                    </div>
+
+                                    <div class="buttons">
+                                        <a href="{{ path('return_copy', { uuid: checkout.bookCopy.uuid }) }}" class="btn btn-outline-primary btn-sm">
+                                            <i class="fa fa-reply"></i> {{ 'actions.return'|trans }}
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="card">
+                    <div class="card-header">{{ 'checkouts.past.label'|trans }}</div>
+                    {% if pastCheckouts|length == 0 %}
+                        <div class="card-body">
+                            <div class="bs-callout bs-callout-info my-0">
+                                <h5>{{ 'info.label'|trans }}</h5>
+                                <p>{{ 'checkouts.past.empty'|trans }}</p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="list-group list-group-flush">
+                            {% for checkout in pastCheckouts %}
+                                <div class="list-group-item d-flex">
+                                    <div class="flex-fill">
+                                        <p class="mb-1">
+                                            {% if checkout.borrower is not null %}
+                                                <a href="{{ path('show_borrower', { uuid: checkout.borrower.uuid}) }}">
+                                                    {{ checkout.borrower.lastname }}, {{ checkout.borrower.firstname }}
+                                                </a>
+
+                                                {% if checkout.borrower.grade is not empty %}
+                                                    <span class="text-muted d-block">{{ checkout.borrower.grade }}</span>
+                                                {% endif %}
+                                            {% else %}
+                                                {{ 'user.removed'|trans }}
+                                            {% endif %}
+                                        </p>
+                                        <p class="mb-1">
+                                            <i class="fas fa-calendar-alt"></i> <i class="fas fa-arrow-right"></i> {{ checkout.start|format_datetime }}
+                                        </p>
+                                        <p class="mb-0">
+                                            <i class="fas fa-calendar-alt"></i> <i class="fas fa-arrow-left"></i> {{ checkout.end|format_datetime }}
+                                        </p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-md-3 sticky-sidebar">
+
+                {% set canCheckout = is_granted('checkout', copy) %}
+                {% set canEdit = is_granted('edit', copy) %}
+                {% set canRemove = is_granted('remove', copy) %}
+
+                {% if canCheckout or canEdit or canRemove %}
+                    <div class="card">
+                        <div class="list-group list-group-flush">
+                            {% if canCheckout %}
+                            <a href="{{ path('checkout_copy', { uuid: copy.uuid}) }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-shopping-cart"></i> {{ 'actions.checkout'|trans }}
+                            </a>
+                            {% endif %}
+                            {% if canEdit %}
+                                <a href="{{ path('edit_book_copy', { uuid: copy.uuid }) }}" class="list-group-item list-group-item-action">
+                                    <i class="fas fa-edit"></i> {{ 'books.copies.edit.label'|trans }}
+                                </a>
+                            {% endif %}
+                            {% if canRemove %}
+                                <a href="{{ path('remove_book_copy', { uuid: copy.uuid }) }}" class="list-group-item list-group-item-action list-group-item-danger">
+                                    <i class="fas fa-trash"></i> {{ 'books.copies.remove.label'|trans }}
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ book.title }}</h5>
+                        {% if book.subtitle is not empty %}
+                            <h6 class="card-subtitle mb-2 text-body-secondary">{{ book.subtitle }}</h6>
+                        {% endif %}
+
+                        {% if book.coverFileName is not empty %}
+                            <img src="{{ vich_uploader_asset(book, 'cover') }}" style="max-width: 100%">
+                        {% endif %}
+
+                        {% if book.publisher is not empty %}
+                            <p>{{ book.publisher }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

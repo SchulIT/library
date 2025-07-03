@@ -1,5 +1,11 @@
 framework:
     cache:
+        pools:
+            book_status_statistics.cache:
+                adapter: cache.adapter.doctrine_dbal
+
+        default_doctrine_dbal_provider: 'doctrine.dbal.default_connection'
+
         # Unique name of your app: used to compute stable namespaces for cache keys.
         #prefix_seed: your_vendor_name/app_name
 

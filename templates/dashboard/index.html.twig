@@ -1,0 +1,67 @@
+{% extends "main.html.twig" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">{{ 'dashboard.label'|trans }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 mb-3 g-4">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ 'dashboard.search.user.label'|trans }}</h5>
+
+                    <form method="get" action="{{ path('borrowers') }}">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                            <input type="text" name="q" class="form-control" placeholder="{{ 'dashboard.search.user.placeholder'|trans }}">
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ 'dashboard.search.copy.label'|trans }}</h5>
+
+                    <form method="get" action="{{ path('dashboard_search_copy') }}">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                            <input type="text" name="q" class="form-control" placeholder="{{ 'dashboard.search.copy.placeholder'|trans }}">
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ 'dashboard.search.book.label'|trans }}</h5>
+
+                    <form method="get" action="{{ path('books') }}">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                            <input type="text" name="q" class="form-control" placeholder="{{ 'dashboard.search.book.placeholder'|trans }}">
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

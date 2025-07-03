@@ -1,0 +1,202 @@
+label:
+  general: Allgemeine Informationen
+  title: Titel
+  subtitle: Subtitel
+  publisher: Verlag
+  isbn: ISBN
+  comment: Kommentar
+  image: Bild
+  created_at: Erstellt am
+  status: Status
+  id: ID
+  count: Anzahl
+  type: Art
+  barcode_id:
+    label: Barcode ID
+    help: Diese ID identifiziert den Benutzer beim Scannen eines Ausweises (bspw. beim Scannen des Schülerausweises).
+  barcode_title:
+    label: Barcode-Titel
+    help: Dieser Text wird unterhalb des Etiketts angezeigt. Wenn das Feld leer ist, wird der Titel des Buches angezeigt.
+  firstname: Vorname
+  lastname: Nachname
+  email: E-Mail-Adresse
+  grade: Klasse
+  delimiter: Trennzeichen
+  file: Datei
+  borrower: Entleiher
+  copies: Exemplare
+  details: Details
+  can_checkout: kann ausgeliehen werden
+
+actions:
+  add: Hinzufügen
+  save: Speichern
+  remove: Löschen
+  import: Importieren
+  edit: Bearbeiten
+  checkout: Ausgeben
+  return: Zurücknehmen
+  back: Zurück
+  details: Details
+  download: Herunterladen
+
+borrowers:
+  label: Entleiher
+  empty: Aktuell ist kein Entleiher im System hinterlegt.
+  add:
+    label: Neuen Entleiher
+    success: Entleiher erfolgreich angelegt
+  edit:
+    label: Entleiher bearbeiten
+    success: Entleiher erfolgreich aktualisiert
+  import:
+    label: Entleiher importieren
+    help: Import für Lernende und Lehrkräfte
+    introduction: Mithilfe einer CSV-Datei können mehrere Entleiher gleichzeitig importiert werden. Vorhandene Entleiher werden automatisch anhand der ID-Spalte identifiziert und bei Bedarf aktualisiert (bspw. wenn sich Name, Klasse oder E-Mail-Adresse geändert haben).
+    csv:
+      label: CSV-Beispieldatei
+      info: Die Reihenfolge der Spalten ist egal. Die Spaltennamen müssen jedoch übereinstimmen. Groß- und Kleinschreibung ist zu beachten. Das Trennzeichen kann entweder ein Semikolon oder ein Komma sein. Enconding ist UTF-8.
+    delete:
+      label: inaktive Entleiher löschen
+      help: Alle Entleiher (derselben Art wie angegeben), die nicht in der importierten Liste enthalten sind, werden gelöscht. Alle noch ausgeliehenen Bücher werden als "nicht ausleihbar" markiert.
+
+checkouts:
+  active:
+    label: Aktive Ausleihen
+    empty: Keine aktiven Ausleihen.
+
+  past:
+    label: Abgeschlossene Ausleihen
+    empty: Es gibt noch keine abgeschlossenen Ausleihen.
+
+checkout:
+  label: Ausleihe
+  preview:
+    label: Vorschau
+  ok: Das Exemplar kann ausgeliehen werden.
+  errors:
+    cannot_checkout: Das Exemplar kann nicht ausgeliehen werden
+    checked_out: "Das Exemplar ist noch verliehen an %lastname%, %firstname%. Das Exemplar wird automatisch zurückgenommen und der oben ausgewählten Person ausgeliehen. Falls das nicht gewünscht ist, das Exemplar aus der Auswahlliste löschen."
+
+return:
+  label: Rücknahme
+  preview:
+    label: Vorschau
+  errors:
+    not_checked_out: Das Exemplar wurde nicht ausgeliehen.
+
+books:
+  label: Bücher
+  empty: Aktuell sind keine Bücher im System hinterlegt.
+
+  copies:
+    label: Exemplare
+    empty: Aktuell sind keine Exemplare im System hinterlegt.
+    cannot_checkout: Exemplar nicht ausleihbar
+    limit: '%count% Exemplare anzeigen'
+    add:
+      label: Exemplare hinzufügen
+      success: Exemplare erfolgreich hinzugefügt
+    edit:
+      label: Exemplar bearbeiten
+      success: Exemplar erfolgreich aktualisiert
+    remove:
+      label: Exemplar löschen
+      caution: Diese Operation kann nicht rückgängig gemacht werden.
+      confirm: 'Soll das Exemplar %id% (%book%) wirklich gelöscht werden? Die Aktion kann nicht rückgängig gemacht werden.'
+      success: Exemplar erfolgreich gelöscht
+    show:
+      label: Details
+
+  add:
+    label: Neues Buch
+    success: Neues Buch angelegt
+    import:
+      label: Informationen importieren
+      help: Anhand der ISBN können Buchinformationen gesucht werden. Abgefragt werden Klett, Westermann, Cornelsen sowie die OpenBook API.
+  edit:
+    label: Buch bearbeiten
+    success: Buch erfolgreich aktualisiert
+  remove:
+    label: Buch löschen
+    success: Buch erfolgreich gelöscht
+    confirm: 'Soll das Buch "%book%" einschließlich aller Exemplare gelöscht werden?'
+    caution: Bei diesem Vorgang werden auch die Ausleihvorgänge für alle Exemplare dieses Buchs gelöscht.
+
+administration:
+  label: Verwaltung
+
+user:
+  removed: Benutzer gelöscht
+
+settings:
+  label: Einstellungen
+  app:
+    label: Allgemeine Einstellungen
+    custom_css:
+      label: Benutzerdefiniertes CSS
+      help: Hier kann benutzerdefiniertes CSS eingebunden werden, um die Software nach eigenen Wünschen einzufärben.
+  labels:
+    label: Etiketten
+    rows:
+      label: Anzahl Zeilen
+      help: Gibt an, wie viele Etiketten untereinander gedruckt werden sollen.
+    columns:
+      label: Anzahl Spalten
+      help: Gibt an, wie viele Etiketten nebeneinander gedruckt werden sollen.
+    margin:
+      top:
+        label: Seitenrand (oben)
+        help: in mm
+      left:
+        label: Seitenrand (links)
+        help: in mm
+      right:
+        label: Seitenrand (rechts)
+        help: in mm
+      bottom:
+        label: Seitenrand (unten)
+        help: in mm
+    cell:
+      width:
+        label: Etikettenbreite
+        help: in mm
+      height:
+        label: Etikettenhöhe
+        help: in mm
+      padding:
+        label: Innenabstand
+        help: Innenabstand der Etiketten (in mm)
+
+select:
+  grade: Alle Klassen
+  type: Alle Arten
+  borrower: Entleiher auswählen
+  copy: Exemplar durch Barcode oder Buchtitel auswählen
+  copies: Exemplare durch Barcode oder Buchtitel auswählen
+
+filter:
+  label: Filter
+  reset: Filter zurücksetzen
+
+search:
+  label: Suche
+
+dashboard:
+  search:
+    user:
+      label: Entleiher suchen
+      placeholder: Barcode scannen oder Namen eingeben
+    copy:
+      label: Exemplar suchen
+      placeholder: Barcode eingeben oder scannen
+    book:
+      label: Buch suchen
+      placeholder: ISBN oder Namen eingeben
+
+labels:
+  download:
+    label: Etiketten herunterladen
+    offset:
+      label: Offset
+      help: Die hier angegebene Zahl bestimmt, wie viele Etiketten zu Beginn der ersten Seite leer gelassen werden. So kann bereits in Teilen verwendetes Etikettenpapier wiederverwendet werden.

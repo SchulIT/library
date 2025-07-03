@@ -1,0 +1,51 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'borrowers.import.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('borrowers') }}">{{ 'borrowers.label'|trans }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }} </li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <div class="bs-callout bs-callout-info">
+        <h5>{{ 'info.label'|trans }}</h5>
+        <p>{{ 'borrowers.import.introduction'|trans }}</p>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'borrowers.import.csv.label'|trans }}</div>
+        <div class="card-body">
+            <p>{{ 'borrowers.import.csv.info'|trans }}</p>
+
+            <pre class="border border-dark rounded p-2">
+<code class="p-0 m-0">ID;Vorname;Nachname;Klasse;E-Mail
+
+...</code></pre>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">{{ 'label.general'|trans }}</div>
+        <div class="card-body">
+            {{ form_widget(form) }}
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-sm btn-primary">
+            <i class="fas fa-upload"></i> {{ 'actions.import'|trans }}
+        </button>
+
+        <a href="{{ path('borrowers') }}" class="btn btn-sm btn-secondary">
+            {{ 'actions.cancel'|trans }}
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}
