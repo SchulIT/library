@@ -25,8 +25,12 @@ label:
   file: Datei
   borrower: Entleiher
   copies: Exemplare
+  template: Etikettenvorlage
   details: Details
   can_checkout: kann ausgeliehen werden
+  name: Name
+  description: Beschreibung
+  preview: Vorschau
 
 actions:
   add: Hinzufügen
@@ -43,12 +47,19 @@ actions:
 borrowers:
   label: Entleiher
   empty: Aktuell ist kein Entleiher im System hinterlegt.
+  only_with_active_checkouts: Nur Entleiher mit aktiven Ausleihen
   add:
     label: Neuen Entleiher
     success: Entleiher erfolgreich angelegt
   edit:
     label: Entleiher bearbeiten
     success: Entleiher erfolgreich aktualisiert
+  remove:
+    label: Entleiher löschen
+    success: Entleiher erfolgreich gelöscht
+    caution: Alle noch ausgeliehenen Bücher werden als "nicht ausleihbar" markiert.
+    empty_checkouts: Der Benutzer hat aktuell keine Bücher ausgeliehen.
+    confirm: 'Soll der Entleiher %lastname%, %firstname% (%type%) wirklich gelöscht werden? Diese Aktion kann nicht rückgängig gemacht werden.'
   import:
     label: Entleiher importieren
     help: Import für Lernende und Lehrkräfte
@@ -71,6 +82,7 @@ checkouts:
 
 checkout:
   label: Ausleihe
+  success: Ausleihe erfolgreich abgeschlossen
   preview:
     label: Vorschau
   ok: Das Exemplar kann ausgeliehen werden.
@@ -80,6 +92,8 @@ checkout:
 
 return:
   label: Rücknahme
+  success: Rückname erfolgreich abgeschlossen
+  confirm: "Soll das Buch %title% von %lastname%, %firstname% (%type%) wirklich zurückgenommen werden?"
   preview:
     label: Vorschau
   errors:
@@ -183,6 +197,21 @@ search:
   label: Suche
 
 dashboard:
+  stats:
+    checkouts:
+      total:
+        label: Anzahl Ausleihen
+      active:
+        label: Aktive Ausleihen
+    borrowers:
+      total:
+        label: Anzahl Entleiher
+    books:
+      total:
+        label: Anzahl Bücher
+      copies:
+        label: Anzahl Exemplare
+
   search:
     user:
       label: Entleiher suchen
@@ -195,8 +224,24 @@ dashboard:
       placeholder: ISBN oder Namen eingeben
 
 labels:
+  label: Etiketten
+  empty: Aktuell sind keine Etikettenvorlagen im System hinterlegt.
+  add:
+    label: Neue Etikettenvorlage
+    success: Etikettenvorlage erfolgreich erstellt
+  edit:
+    label: Etikettenvorlage bearbeiten
+    success: Etikettenvorlage erfolgreich aktualisiert
+  remove:
+    label: Etikettenvorlage löschen
+    confirm: 'Soll die Etikettenvorlage "%name%" wirklich gelöscht werden? Anschließend können keine Etiketten mehr mit dieser Vorlage gedruckt werden.'
+    success: Etikettenvorlage erfolgreich gelöscht
+
   download:
     label: Etiketten herunterladen
     offset:
       label: Offset
       help: Die hier angegebene Zahl bestimmt, wie viele Etiketten zu Beginn der ersten Seite leer gelassen werden. So kann bereits in Teilen verwendetes Etikettenpapier wiederverwendet werden.
+
+
+not_available: N/A

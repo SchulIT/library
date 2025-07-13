@@ -18,7 +18,7 @@ class Checkout {
 
     #[ORM\ManyToOne(targetEntity: Borrower::class, inversedBy: 'checkouts')]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
-    private Borrower $borrower;
+    private ?Borrower $borrower = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private DateTime $start;
@@ -42,11 +42,11 @@ class Checkout {
         return $this;
     }
 
-    public function getBorrower(): Borrower {
+    public function getBorrower(): ?Borrower {
         return $this->borrower;
     }
 
-    public function setBorrower(Borrower $borrower): Checkout {
+    public function setBorrower(?Borrower $borrower): Checkout {
         $this->borrower = $borrower;
         return $this;
     }

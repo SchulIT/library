@@ -8,15 +8,13 @@ use App\Entity\Book;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
-class AvailabilityReportHelper {
+class AvailabilityReportGenerator {
 
     private const string KEY_PATTERN = 'report.%d';
     public const int LIFETIME_IN_SECONDS = 3600;
 
-    public function __construct(private readonly TagAwareCacheInterface $bookStatusStatisticsCache,
-                                private readonly CheckoutManager $checkoutManager,
+    public function __construct(private readonly CheckoutManager $checkoutManager,
                                 private readonly CacheInterface $cache) {
 
     }
@@ -30,10 +28,13 @@ class AvailabilityReportHelper {
      */
     public function regenerateReportForBook(Book $book): AvailabilityReport {
         $this->cache->delete(sprintf(self::KEY_PATTERN, $book->getId()));
-        return $this->getAvailabilityReportForBook($book);
+        return $this->genereateReportForBook($book);
     }
 
-    public function getAvailabilityReportForBook(Book $book): AvailabilityReport {
+    /**
+     * @throws InvalidArgumentException
+     */
+    public function genereateReportForBook(Book $book): AvailabilityReport {
         return $this->cache->get(sprintf(self::KEY_PATTERN, $book->getId()), function (ItemInterface $item) use($book): AvailabilityReport {
             $item->expiresAfter(self::LIFETIME_IN_SECONDS);
 

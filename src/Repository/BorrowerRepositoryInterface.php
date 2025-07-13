@@ -7,6 +7,8 @@ use App\Entity\BorrowerType;
 
 interface BorrowerRepositoryInterface extends TransactionalRepositoryInterface {
 
+    public function findOneById(int $id): ?Borrower;
+
     public function findByExternalId(string $externalId): ?Borrower;
 
     /**
@@ -15,9 +17,10 @@ interface BorrowerRepositoryInterface extends TransactionalRepositoryInterface {
      * @param int $page
      * @param int $limit
      * @param string|null $searchQuery
+     * @param bool $onlyWithActiveCheckouts
      * @return PaginatedResult<Borrower>
      */
-    public function find(array $types, ?string $grade, int &$page, int &$limit, ?string $searchQuery = null): PaginatedResult;
+    public function find(array $types, ?string $grade, int &$page, int &$limit, ?string $searchQuery = null, bool $onlyWithActiveCheckouts = false): PaginatedResult;
 
     /**
      * @param BorrowerType $type
@@ -34,6 +37,8 @@ interface BorrowerRepositoryInterface extends TransactionalRepositoryInterface {
      * @return Borrower[]
      */
     public function findAll(): array;
+
+    public function countAll(): int;
 
     public function persist(Borrower $person): void;
 

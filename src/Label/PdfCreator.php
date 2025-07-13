@@ -2,17 +2,14 @@
 
 namespace App\Label;
 
-use App\Entity\BookCopy;
-use App\Settings\LabelSettings;
+use App\Entity\LabelTemplate;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use TCPDF;
 
 readonly class PdfCreator {
 
-    public function __construct(private LabelSettings $labelSettings) {
-
-    }
+    public function __construct() { }
 
     public function createPdfResponse(DownloadLabelsRequest $request): Response {
         $response = new Response($this->createPdf($request), 200, [
@@ -29,7 +26,9 @@ readonly class PdfCreator {
      * @return string Resulting PDF document as (binary?) string
      */
     public function createPdf(DownloadLabelsRequest $request): string {
-        $pdf = $this->createTCPDF();
+        $label = $request->template;
+
+        $pdf = $this->createTCPDF($label);
         $pdf->AddPage();
 
         $style = $this->getBarcodeStyle();
@@ -37,8 +36,8 @@ readonly class PdfCreator {
         $column = 1;
         $row = 1;
 
-        $cellHeight = $this->labelSettings->cellHeightMM - 2 * $this->labelSettings->cellPaddingMM;
-        $cellWidth = $this->labelSettings->cellWidthMM - 2 * $this->labelSettings->cellPaddingMM;
+        $cellHeight = $label->getCellHeightMM() - 2 * $label->getCellPaddingMM();
+        $cellWidth = $label->getCellWidthMM() - 2 * $label->getCellPaddingMM();
 
         $copies = $request->copies;
         array_unshift(
@@ -50,49 +49,49 @@ readonly class PdfCreator {
             $x = $pdf->GetX();
             $y = $pdf->GetY();
             /*$pdf->setCellMargins(
-                $this->labelSettings->cellPaddingMM,
-                $this->labelSettings->cellPaddingMM,
-                $this->labelSettings->cellPaddingMM,
-                $this->labelSettings->cellPaddingMM
+                $label->getCellPaddingMM(),
+                $label->getCellPaddingMM(),
+                $label->getCellPaddingMM(),
+                $label->getCellPaddingMM()
             );*/
 
             if ($copy !== null) {
                 $pdf->write1DBarcode(
                     $copy->getBarcodeId(),
                     'C39',
-                    $x + $this->labelSettings->cellPaddingMM,
-                    $y + $this->labelSettings->cellPaddingMM,
+                    $x + $label->getCellPaddingMM(),
+                    $y + $label->getCellPaddingMM(),
                     $cellWidth,
-                    $cellHeight * 0.5,
+                    $cellHeight * 0.55,
                     0.4,
                     $style,
                     'M'
                 );
             }
 
-            $pdf->setXY($x + $this->labelSettings->cellPaddingMM, $y + $cellHeight * 0.5);
+            $pdf->setX($x + $label->getCellPaddingMM());
 
             if($copy !== null) {
                 $text = !empty($copy->getBook()->getBarcodeTitle()) ? $copy->getBook()->getBarcodeTitle() : $copy->getBook()->getTitle();
                 $pdf->Cell(
                     $cellWidth,
-                    $cellHeight * 0.5,
+                    $cellHeight * 0.45,
                     $text,
                     align: 'C'
                 );
             }
 
-            $pdf->setXY($x + $this->labelSettings->cellWidthMM, $y);
+            $pdf->setXY($x + $label->getCellWidthMM(), $y);
 
-            if($column === $this->labelSettings->columns) {
-                $pdf->Ln($this->labelSettings->cellHeightMM);
+            if($column === $label->getColumns()) {
+                $pdf->Ln($label->getCellHeightMM());
                 $column = 1;
                 $row++;
             } else {
                 $column++;
             }
 
-            if($row === $this->labelSettings->rows + 1) {
+            if($row === $label->getRows() + 1) {
                 $pdf->AddPage();
                 $row = 1;
             }
@@ -120,7 +119,7 @@ readonly class PdfCreator {
         ];
     }
 
-    private function createTCPDF(): TCPDF {
+    private function createTCPDF(LabelTemplate $label): TCPDF {
         $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
         $pdf->SetCreator(PDF_CREATOR);
         $pdf->setAuthor('');
@@ -128,9 +127,9 @@ readonly class PdfCreator {
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(false);
 
-        $pdf->setTopMargin($this->labelSettings->topMarginMM);
-        $pdf->setLeftMargin($this->labelSettings->leftMarginMM);
-        $pdf->setRightMargin($this->labelSettings->rightMarginMM);
+        $pdf->setTopMargin($label->getTopMarginMM());
+        $pdf->setLeftMargin($label->getLeftMarginMM());
+        $pdf->setRightMargin($label->getRightMarginMM());
 
         $pdf->setAutoPageBreak(false);
 

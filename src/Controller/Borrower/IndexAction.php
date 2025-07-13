@@ -2,6 +2,7 @@
 
 namespace App\Controller\Borrower;
 
+use App\Borrower\BorrowerReportGenerator;
 use App\Entity\BorrowerType;
 use App\Repository\BorrowerRepositoryInterface;
 use App\Security\Voter\BorrowerVoter;
@@ -12,7 +13,10 @@ use Symfony\Component\Routing\Attribute\Route;
 use Throwable;
 
 class IndexAction extends AbstractController {
-    public function __construct(private readonly BorrowerRepositoryInterface $repository) {
+
+    public const string CHECK_VALUE = '✓';
+
+    public function __construct(private readonly BorrowerRepositoryInterface $repository, private readonly BorrowerReportGenerator $borrowerReportGenerator) {
 
     }
 
@@ -24,6 +28,7 @@ class IndexAction extends AbstractController {
         $limit = $request->query->getInt('limit', 50);
         $grade = $request->query->get('grade', null);
         $searchQuery = $request->query->get('q', null);
+        $onlyWithActiveCheckouts = $request->query->get('active_checkouts') === self::CHECK_VALUE;
 
         try {
             $selectedType = [ BorrowerType::from($request->query->get('type', null)) ];
@@ -31,7 +36,15 @@ class IndexAction extends AbstractController {
             $selectedType = BorrowerType::cases();
         }
 
-        $result = $this->repository->find($selectedType, $grade, $page, $limit, $searchQuery);
+        if(empty($grade)) {
+            $grade = null;
+        }
+
+        if(empty($searchQuery)) {
+            $searchQuery = null;
+        }
+
+        $result = $this->repository->find($selectedType, $grade, $page, $limit, $searchQuery, $onlyWithActiveCheckouts);
 
         if(!empty($searchQuery) && $result->totalCount === 1) {
             return $this->redirectToRoute('show_borrower', [
@@ -40,6 +53,11 @@ class IndexAction extends AbstractController {
         }
 
         $grades = $this->repository->findGrades();
+        $reports = [ ];
+
+        foreach($result->result as $borrower) {
+            $reports[$borrower->getId()] = $this->borrowerReportGenerator->generateReportForBorrower($borrower);
+        }
 
         return $this->render('borrowers/index.html.twig', [
             'borrowers' => $result->result,
@@ -49,7 +67,9 @@ class IndexAction extends AbstractController {
             'grades' => $grades,
             'query' => $searchQuery,
             'types' => BorrowerType::cases(),
-            'selectedType' => count($selectedType) > 1 ? null : $selectedType[0]
+            'selectedType' => count($selectedType) > 1 ? null : $selectedType[0],
+            'reports' => $reports,
+            'active_checkouts' => $onlyWithActiveCheckouts
         ]);
     }
 }

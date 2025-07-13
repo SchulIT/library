@@ -27,6 +27,7 @@ class CheckoutAction extends AbstractController {
 
         if($form->isSubmitted() && $form->isValid()) {
             $this->checkoutManager->bulkCheckout($checkout);
+            $this->addFlash('success', 'checkout.success');
 
             return $this->redirectToRoute('show_borrower', [
                 'uuid' => $checkout->borrower->getUuid()

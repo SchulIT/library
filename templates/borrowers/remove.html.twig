@@ -1,0 +1,46 @@
+{% extends "main.html.twig" %}
+
+{% block title %}{{ 'borrowers.remove.label'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">{{ 'dashboard.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('borrowers') }}">{{ 'books.label'|trans }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('show_borrower', { uuid: borrower.uuid}) }}">{{ borrower.lastname }}, {{ borrower.firstname }}</a></li>
+        <li class="breadcrumb-item">{{ block('title') }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <div class="card border-danger">
+        <div class="card-header text-bg-danger">{{ 'label.general'|trans }}</div>
+        <div class="card-body">
+            {% if activeCheckouts|length > 0 %}
+                <div class="bs-callout bs-callout-danger mt-0">
+                    <p>{{ 'borrowers.remove.caution'|trans }}</p>
+                    <a href="{{ path('show_borrower', { uuid: borrower.uuid}) }}">{{ 'actions.details'|trans }}</a>
+                </div>
+            {% else %}
+                <div class="bs-callout bs-callout-info">
+                    <p>{{ 'borrowers.remove.empty_checkouts'|trans }}</p>
+                </div>
+            {% endif %}
+
+            {{ form_widget(form.group_general.confirm) }}
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="submit" class="btn btn-sm btn-primary">
+            <i class="fas fa-save"></i> {{ 'actions.save'|trans }}
+        </button>
+
+        <a href="{{ path('borrowers') }}" class="btn btn-sm btn-secondary">
+            {{ 'actions.cancel'|trans }}
+        </a>
+    </div>
+    {{ form_end(form) }}
+
+{% endblock %}

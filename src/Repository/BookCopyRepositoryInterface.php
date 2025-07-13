@@ -36,6 +36,8 @@ interface BookCopyRepositoryInterface extends TransactionalRepositoryInterface {
 
     public function countNotAvailableByBook(Book $book): int;
 
+    public function countAll(): int;
+
     public function persist(BookCopy $copy): void;
 
     public function remove(BookCopy $copy): void;

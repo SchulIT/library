@@ -51,8 +51,8 @@ readonly class Builder {
         }
 
         if($this->authorizationChecker->isGranted('ROLE_BOOKS_ADMIN')) {
-            $menu->addChild('labels.download.label', [
-                    'route' => 'download_pdf_labels'
+            $menu->addChild('labels.label', [
+                    'route' => 'labels'
                 ])
                 ->setExtra('icon', 'fa fa-barcode');
         }

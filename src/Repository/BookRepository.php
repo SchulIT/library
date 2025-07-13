@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Book;
-use App\Helper\IsbnHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
@@ -56,6 +55,14 @@ class BookRepository extends AbstractRepository implements BookRepositoryInterfa
             [],
             ['title' => 'asc']
         );
+    }
+
+    public function countAll(): int {
+        return $this->em->createQueryBuilder()
+            ->select('COUNT(1)')
+            ->from(Book::class, 'b')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     public function persist(Book $book): void {

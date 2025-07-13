@@ -61,11 +61,12 @@ class BookCopyVoter extends Voter {
 
     private function canCheckout(TokenInterface $token, BookCopy $copy): bool {
         return $this->accessDecisionManager->decide($token, ['ROLE_LENDER'])
+            && $copy->canCheckout() === true
             && $this->checkoutManager->isAvailable($copy);
     }
 
     private function canReturn(TokenInterface $token, BookCopy $copy): bool {
         return $this->accessDecisionManager->decide($token, ['ROLE_LENDER'])
-            && $this->checkoutManager->isAvailable($copy);
+            && $copy->canCheckout() === true;
     }
 }

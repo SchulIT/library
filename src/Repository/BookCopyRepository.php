@@ -87,4 +87,12 @@ class BookCopyRepository extends AbstractTransactionalRepository implements Book
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    public function countAll(): int {
+        return $this->em->createQueryBuilder()
+            ->select('COUNT(1)')
+            ->from(BookCopy::class, 'c')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

@@ -13,9 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class EditAction extends AbstractController {
-    public function __construct(private readonly BookRepositoryInterface $repository) {
-
-    }
+    public function __construct(private readonly BookRepositoryInterface $repository) { }
 
     #[Route('/book/{uuid}/edit', name: 'edit_book')]
     public function __invoke(#[MapEntity(mapping: ['uuid' => 'uuid'])] Book $book, Request $request): Response {

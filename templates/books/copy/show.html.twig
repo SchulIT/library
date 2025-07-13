@@ -60,9 +60,11 @@
                                     </div>
 
                                     <div class="buttons">
-                                        <a href="{{ path('return_copy', { uuid: checkout.bookCopy.uuid }) }}" class="btn btn-outline-primary btn-sm">
-                                            <i class="fa fa-reply"></i> {{ 'actions.return'|trans }}
-                                        </a>
+                                        {% if is_granted('return', copy) %}
+                                            <a href="{{ path('return_copy', { uuid: checkout.bookCopy.uuid }) }}" class="btn btn-outline-primary btn-sm">
+                                                <i class="fa fa-reply"></i> {{ 'actions.return'|trans }}
+                                            </a>
+                                        {% endif %}
                                     </div>
                                 </div>
                             {% endfor %}

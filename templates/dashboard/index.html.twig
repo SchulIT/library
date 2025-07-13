@@ -9,6 +9,53 @@
 {% endblock %}
 
 {% block content %}
+    <div class="row row-cols-1 row-cols-sm-5 g-4 mb-4 d-none d-sm-flex">
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ 'dashboard.stats.checkouts.total.label'|trans }}</h5>
+                    <p class="display-6">{{ totalCheckouts }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ 'dashboard.stats.checkouts.active.label'|trans }}</h5>
+                    <p class="display-6">{{ activeCheckouts }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ 'dashboard.stats.borrowers.total.label'|trans }}</h5>
+                    <p class="display-6">{{ borrowersCount }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ 'dashboard.stats.books.total.label'|trans }}</h5>
+                    <p class="display-6">{{ booksCount }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ 'dashboard.stats.books.copies.label'|trans }}</h5>
+                    <p class="display-6">{{ copiesCount }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 mb-3 g-4">
         <div class="col">
             <div class="card">

@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class CheckoutBookCopyRequest {
     #[Assert\NotNull]
-    public BookCopy $bookCopy;
+    public BookCopy $copy;
 
     #[Assert\NotNull]
     public Borrower $borrower;

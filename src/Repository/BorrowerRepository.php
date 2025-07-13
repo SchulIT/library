@@ -8,6 +8,13 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class BorrowerRepository extends AbstractTransactionalRepository implements BorrowerRepositoryInterface {
 
+    public function findOneById(int $id): ?Borrower {
+        return $this->em->getRepository(Borrower::class)
+            ->findOneBy([
+                'id' => $id
+            ]);
+    }
+
     public function findByExternalId(string $externalId): ?Borrower {
         return $this->em->getRepository(Borrower::class)
             ->findOneBy([
@@ -15,7 +22,7 @@ class BorrowerRepository extends AbstractTransactionalRepository implements Borr
             ]);
     }
 
-    public function find(array $types, ?string $grade, int &$page, int &$limit, ?string $searchQuery = null): PaginatedResult {
+    public function find(array $types, ?string $grade, int &$page, int &$limit, ?string $searchQuery = null, bool $onlyWithActiveCheckouts = false): PaginatedResult {
         if($page < 1) {
             $page = 1;
         }
@@ -36,6 +43,18 @@ class BorrowerRepository extends AbstractTransactionalRepository implements Borr
 
         if($grade !== null) {
             $qb->andWhere('p.grade = :grade')->setParameter('grade', $grade);
+        }
+
+        if($onlyWithActiveCheckouts === true) {
+            $qbInner = $this->em->createQueryBuilder()
+                ->select('bInner.id')
+                ->from(Borrower::class, 'bInner')
+                ->innerJoin('bInner.checkouts', 'cInner')
+                ->where('cInner.end IS NULL');
+
+            $qb->andWhere(
+                $qb->expr()->in('p.id', $qbInner->getDQL())
+            );
         }
 
         if(!empty($searchQuery)) {
@@ -92,6 +111,14 @@ class BorrowerRepository extends AbstractTransactionalRepository implements Borr
             ->orderBy('p.grade', 'asc');
 
         return array_column($qb->getQuery()->getScalarResult(), 'grade');
+    }
+
+    public function countAll(): int {
+        return $this->em->createQueryBuilder()
+            ->select('COUNT(1)')
+            ->from(Borrower::class, 'p')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     public function persist(Borrower $person): void {

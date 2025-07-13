@@ -2,7 +2,7 @@
 
 namespace App\Controller\Book;
 
-use App\Book\AvailabilityReportHelper;
+use App\Book\AvailabilityReportGenerator;
 use App\Repository\BookCopyRepositoryInterface;
 use App\Repository\BookRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,9 +11,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class IndexAction extends AbstractController {
-    public function __construct(private readonly BookRepositoryInterface $repository,
+    public function __construct(private readonly BookRepositoryInterface     $repository,
                                 private readonly BookCopyRepositoryInterface $copyRepository,
-                                private readonly AvailabilityReportHelper $availabilityReportHelper) {
+                                private readonly AvailabilityReportGenerator $availabilityReportHelper) {
 
     }
 
@@ -35,7 +35,7 @@ class IndexAction extends AbstractController {
         $reports = [ ];
 
         foreach($result->result as $book) {
-            $reports[$book->getId()] = $this->availabilityReportHelper->getAvailabilityReportForBook($book);
+            $reports[$book->getId()] = $this->availabilityReportHelper->genereateReportForBook($book);
         }
 
         return $this->render('books/index.html.twig', [

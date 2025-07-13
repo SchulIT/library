@@ -2,6 +2,7 @@
 
 namespace App\Import\Borrower;
 
+use App\Checkout\CheckoutManager;
 use App\Entity\Borrower;
 use App\Entity\BorrowerType;
 use App\Repository\BookCopyRepositoryInterface;
@@ -19,7 +20,8 @@ class CsvImporter {
     public const string EmailHeader = 'E-Mail';
     public const string GradeHeader = 'Klasse';
 
-    public function __construct(private readonly BorrowerRepositoryInterface $borrowerRepository, private readonly CheckoutRepositoryInterface $checkoutRepository, private readonly BookCopyRepositoryInterface $bookCopyRepository) {
+    public function __construct(private readonly BorrowerRepositoryInterface $borrowerRepository,
+                                private readonly CheckoutManager $checkoutManager) {
     }
 
     public function importCsv(string $csvContent, BorrowerType $type, string $delimiter, bool $remove = false): void {
@@ -82,17 +84,7 @@ class CsvImporter {
 
         /** @var Borrower $borrower */
         foreach($toRemove as $borrower) {
-            foreach($borrower->getCheckouts() as $checkout) {
-                $checkout->setEnd(new DateTime());
-                $checkout->setComment('Ausleihe beendet, da Schüler gelöscht wurde');
-                $this->checkoutRepository->persist($checkout);
-
-                $copy = $checkout->getBookCopy();
-                $copy->setCanCheckout(false);
-                $copy->setComment(sprintf('Buch wurde vor dem Löschen des Schülers %s, %s (ID: %s) nicht zurückgegeben.', $borrower->getLastname(), $borrower->getFirstname(), $borrower->getBarcodeId()));
-                $this->bookCopyRepository->persist($copy);
-            }
-
+            $this->checkoutManager->endAllActiveCheckoutsForBorrower($borrower);
             $this->borrowerRepository->remove($borrower);
         }
 

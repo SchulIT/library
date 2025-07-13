@@ -3,6 +3,7 @@
 namespace App\Label;
 
 use App\Entity\BookCopy;
+use App\Entity\LabelTemplate;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class DownloadLabelsRequest {
@@ -11,6 +12,9 @@ class DownloadLabelsRequest {
      */
     #[Assert\Count(min: 1)]
     public array $copies = [ ];
+
+    #[Assert\NotNull]
+    public ?LabelTemplate $template = null;
 
     #[Assert\GreaterThanOrEqual(0)]
     public int $offset = 0;

@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\BookCopy;
+use App\Entity\LabelTemplate;
+use App\Security\Voter\LabelTemplateVoter;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -22,6 +24,18 @@ class DownloadLabelsRequestType extends AbstractType {
                 'query_builder' => function(EntityRepository $repository): QueryBuilder {
                     return $repository->createQueryBuilder('c')
                         ->where('c.canCheckout = true');
+                },
+                'attr' => [
+                    'data-choice' => 'true'
+                ]
+            ])
+            ->add('template', EntityType::class, [
+                'label' => 'label.template',
+                'class' => LabelTemplate::class,
+                'choice_label' => fn(LabelTemplate $template) => $template->getName(),
+                'query_builder' => function(EntityRepository $repository) {
+                    return $repository->createQueryBuilder('l')
+                        ->addOrderBy('l.name', 'asc');
                 },
                 'attr' => [
                     'data-choice' => 'true'

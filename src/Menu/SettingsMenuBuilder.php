@@ -14,11 +14,6 @@ class SettingsMenuBuilder extends AbstractMenuBuilder {
         ])
             ->setExtra('icon', 'fa-solid fa-cog');
 
-        $root->addChild('settings.labels.label', [
-            'route' => 'label_settings'
-        ])
-            ->setExtra('icon', 'fa-solid fa-barcode');
-
         return $root;
     }
 }

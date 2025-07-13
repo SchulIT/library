@@ -5,12 +5,13 @@ namespace App\Checkout;
 use App\Entity\BookCopy;
 use App\Entity\Borrower;
 use App\Entity\Checkout;
+use App\Repository\BookCopyRepositoryInterface;
 use App\Repository\CheckoutRepositoryInterface;
 use DateTime;
 
 readonly class CheckoutManager {
 
-    public function __construct(private CheckoutRepositoryInterface $repository) {
+    public function __construct(private CheckoutRepositoryInterface $repository, private BookCopyRepositoryInterface $bookCopyRepository, private CheckoutRepositoryInterface $checkoutRepository, ) {
 
     }
 
@@ -28,8 +29,8 @@ readonly class CheckoutManager {
         /** @var Checkout|null $lastCheckout */
         $lastCheckout = $copy->getCheckouts()->first() ?? null;
 
-        if($lastCheckout instanceof Checkout && $lastCheckout->getBorrower()->getId() === $borrower->getId()) {
-            // no need for return
+        if($lastCheckout instanceof Checkout && $lastCheckout->getEnd() === null && $lastCheckout->getBorrower()->getId() === $borrower->getId()) {
+            // no need for checkout
             return;
         }
 
@@ -115,5 +116,18 @@ readonly class CheckoutManager {
 
     public function isAvailable(BookCopy $copy): bool {
         return $this->getStatus($copy) === CheckoutStatus::Available;
+    }
+
+    public function endAllActiveCheckoutsForBorrower(Borrower $borrower): void {
+        foreach($this->checkoutRepository->findActiveByBorrower($borrower) as $checkout) {
+            $checkout->setEnd(new DateTime());
+            $checkout->setComment('Ausleihe beendet, da Entleiher gelöscht wurde');
+            $this->repository->persist($checkout);
+
+            $copy = $checkout->getBookCopy();
+            $copy->setCanCheckout(false);
+            $copy->setComment(sprintf('Buch wurde vor dem Löschen des Entleihers %s, %s (ID: %s) nicht zurückgegeben.', $borrower->getLastname(), $borrower->getFirstname(), $borrower->getBarcodeId()));
+            $this->bookCopyRepository->persist($copy);
+        }
     }
 }
