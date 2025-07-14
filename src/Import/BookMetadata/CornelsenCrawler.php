@@ -65,7 +65,7 @@ class CornelsenCrawler implements CrawlerInterface {
 
             return $metadata;
         } catch (Throwable $e) {
-            $this->logger->error(sprintf('[cornelsen] Fehler der Abfrage der Produktinformationen (ISBN: %s)', $this->getUrlForIsbn($metadata->isbn)), [
+            $this->logger->error(sprintf('[cornelsen] Fehler der Abfrage der Produktinformationen (ISBN: %s)', $this->getUrlForIsbn($isbn)), [
                 'exception' => $e
             ]);
 
