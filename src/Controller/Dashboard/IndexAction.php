@@ -2,6 +2,7 @@
 
 namespace App\Controller\Dashboard;
 
+use App\Entity\User;
 use App\Repository\BookCopyRepositoryInterface;
 use App\Repository\BookRepositoryInterface;
 use App\Repository\BorrowerRepositoryInterface;
@@ -10,6 +11,7 @@ use App\Repository\UserRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class IndexAction extends AbstractController {
 
@@ -21,12 +23,18 @@ class IndexAction extends AbstractController {
     }
 
     #[Route('/dashboard', name: 'dashboard')]
-    public function indexAction(): Response {
+    public function indexAction(#[CurrentUser] User $user): Response {
         $totalCheckouts = $this->checkoutRepository->countAll();
         $activeCheckouts = $this->checkoutRepository->countActive();
         $borrowersCount = $this->borrowerRepository->countAll();
         $booksCount = $this->bookRepository->countAll();
         $copiesCount = $this->bookCopyRepository->countAll();
+
+        $currentCheckouts = [ ];
+
+        foreach($user->getAssociatedBorrowers() as $borrower) {
+            $currentCheckouts[$borrower->getId()] = $this->checkoutRepository->findActiveByBorrower($borrower);
+        }
 
         return $this->render('dashboard/index.html.twig', [
             'totalCheckouts' => $totalCheckouts,
@@ -34,6 +42,7 @@ class IndexAction extends AbstractController {
             'borrowersCount' => $borrowersCount,
             'booksCount' => $booksCount,
             'copiesCount' => $copiesCount,
+            'currentCheckouts' => $currentCheckouts
         ]);
     }
 }

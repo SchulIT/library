@@ -130,4 +130,15 @@ class BorrowerRepository extends AbstractTransactionalRepository implements Borr
         $this->em->remove($person);
         $this->flushIfNotInTransaction();
     }
+
+    public function findAllByEmailOrExternalId(array $emailsOrExternalIds): array {
+        return $this->em->createQueryBuilder()
+            ->select('b')
+            ->from(Borrower::class, 'b')
+            ->where('b.email IN (:emailsOrExternalIds)')
+            ->orWhere('b.barcodeId IN (:emailsOrExternalIds)')
+            ->setParameter('emailsOrExternalIds', $emailsOrExternalIds)
+            ->getQuery()
+            ->getResult();
+    }
 }

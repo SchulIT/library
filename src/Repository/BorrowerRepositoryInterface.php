@@ -38,6 +38,12 @@ interface BorrowerRepositoryInterface extends TransactionalRepositoryInterface {
      */
     public function findAll(): array;
 
+    /**
+     * @param string[] $emailsOrExternalIds
+     * @return Borrower[]
+     */
+    public function findAllByEmailOrExternalId(array $emailsOrExternalIds): array;
+
     public function countAll(): int;
 
     public function persist(Borrower $person): void;

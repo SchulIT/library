@@ -197,6 +197,9 @@ search:
   label: Suche
 
 dashboard:
+  active_checkouts:
+    label: Aktive Ausleihen
+    empty: Keine aktiven Ausleihen.
   stats:
     checkouts:
       total:

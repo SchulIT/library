@@ -45,9 +45,11 @@
                                 </p>
                             </div>
 
-                            <div class="buttons">
-                                <a href="{{ path('return_copy', { uuid: checkout.bookCopy.uuid }) }}" class="btn btn-primary btn-sm">{{ 'actions.return'|trans }}</a>
-                            </div>
+                            {% if is_granted('return', checkout.bookCopy) %}
+                                <div class="buttons">
+                                    <a href="{{ path('return_copy', { uuid: checkout.bookCopy.uuid }) }}" class="btn btn-primary btn-sm">{{ 'actions.return'|trans }}</a>
+                                </div>
+                            {% endif %}
                         </div>
                     {% endfor %}
                 </div>

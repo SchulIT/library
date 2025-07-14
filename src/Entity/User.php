@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
@@ -33,16 +35,26 @@ class User implements UserInterface {
     #[Assert\NotBlank]
     private string $lastname;
 
-    #[ORM\Column(type: Types::STRING)]
-    #[Assert\NotBlank]
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[Assert\NotBlank(allowNull: true)]
     #[Assert\Email]
-    private string $email;
+    private ?string $email = null;
 
     #[ORM\Column(type: Types::JSON)]
     private array $roles = ['ROLE_USER'];
 
+    /**
+     * @var Collection<Borrower>
+     */
+    #[ORM\ManyToMany(targetEntity: Borrower::class)]
+    #[ORM\JoinTable]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(onDelete: 'CASCADE')]
+    private Collection $associatedBorrowers;
+
     public function __construct() {
         $this->uuid = Uuid::v4()->toString();
+        $this->associatedBorrowers = new ArrayCollection();
     }
 
     public function getIdpIdentifier(): Uuid {
@@ -81,11 +93,11 @@ class User implements UserInterface {
         return $this;
     }
 
-    public function getEmail(): string {
+    public function getEmail(): ?string {
         return $this->email;
     }
 
-    public function setEmail(string $email): User {
+    public function setEmail(?string $email): User {
         $this->email = $email;
         return $this;
     }
@@ -103,6 +115,21 @@ class User implements UserInterface {
 
     public function getUserIdentifier(): string {
         return $this->username;
+    }
+
+    public function addAssociatedBorrower(Borrower $borrower): void {
+        $this->associatedBorrowers->add($borrower);
+    }
+
+    public function removeAssociatedBorrower(Borrower $borrower): void {
+        $this->associatedBorrowers->removeElement($borrower);
+    }
+
+    /**
+     * @return Collection<Borrower>
+     */
+    public function getAssociatedBorrowers(): Collection {
+        return $this->associatedBorrowers;
     }
 
     public function __toString(): string {

@@ -2,13 +2,17 @@
 
 namespace App\Security\User;
 
+use App\Entity\Borrower;
 use App\Entity\User;
+use App\Repository\BorrowerRepositoryInterface;
+use App\Utils\CollectionUtils;
 use LightSaml\ClaimTypes;
 use LightSaml\Model\Protocol\Response;
 use SchulIT\CommonBundle\Saml\ClaimTypes as SamlClaimTypes;
 use SchulIT\CommonBundle\Security\User\AbstractUserMapper;
 
 class UserMapper extends AbstractUserMapper {
+    public function __construct(private readonly BorrowerRepositoryInterface $borrowerRepository) { }
 
     /**
      * @param Response|array[] $data Either a SAMLResponse or an array (keys: SAML Attribute names, values: corresponding values)
@@ -29,7 +33,8 @@ class UserMapper extends AbstractUserMapper {
                 ClaimTypes::COMMON_NAME,
                 ClaimTypes::GIVEN_NAME,
                 ClaimTypes::SURNAME,
-                ClaimTypes::EMAIL_ADDRESS
+                ClaimTypes::EMAIL_ADDRESS,
+                SamlClaimTypes::EXTERNAL_ID,
             ],
             [
                 static::ROLES_ASSERTION_NAME
@@ -47,6 +52,7 @@ class UserMapper extends AbstractUserMapper {
         $lastname = $data[ClaimTypes::SURNAME];
         $email = $data[ClaimTypes::EMAIL_ADDRESS];
         $roles = $data[static::ROLES_ASSERTION_NAME] ?? [ ];
+        $rawStudentEmailAddresses = $data[SamlClaimTypes::EXTERNAL_ID];
 
         if(!is_array($roles)) {
             $roles = [ $roles ];
@@ -62,6 +68,27 @@ class UserMapper extends AbstractUserMapper {
             ->setLastname($lastname)
             ->setEmail($email)
             ->setRoles($roles);
+
+        $toSearch = [ ];
+
+        if(!empty($email)) {
+            $toSearch[] = $email;
+        }
+
+        if(!empty($rawStudentEmailAddresses)) {
+            $emailAddresses = explode(',', $rawStudentEmailAddresses);
+            $toSearch = array_merge($toSearch, $emailAddresses);
+        }
+
+        if(!empty($toSearch)) {
+            $borrowers = $this->borrowerRepository->findAllByEmailOrExternalId($toSearch);
+
+            CollectionUtils::synchronize(
+                $user->getAssociatedBorrowers(),
+                $borrowers,
+                fn(Borrower $borrower) => $borrower->getId()
+            );
+        }
 
         return $user;
     }

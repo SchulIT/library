@@ -58,7 +58,7 @@
         </div>
     {% endif %}
 
-    <div class="row mb-3 g-4">
+    <div class="row mb-2 g-4">
         {% if is_granted('show-borrowers') %}
             <div class="col">
                 <div class="card">
@@ -120,5 +120,59 @@
         {% endif %}
     </div>
 
+    {% for borrower in app.user.associatedBorrowers %}
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex align-items-baseline">
+                    <div class="flex-fill">
+                        {{ borrower.lastname }}, {{ borrower.firstname }}
+
+                        <span class="badge text-bg-secondary">{{ borrower.type|trans }}</span>
+                    </div>
+                    {% if is_granted('show', borrower) %}
+                        <a href="{{ path('show_borrower', { uuid: borrower.uuid }) }}" class="btn btn-outline-primary btn-sm">
+                            {{ 'actions.details'|trans }}
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% set activeCheckoutsForBorrower = currentCheckouts[borrower.id] %}
+
+            {% if activeCheckoutsForBorrower|length == 0 %}
+                <div class="card-body">
+                    <div class="bs-callout bs-callout-info mt-0 mb-0">
+                        <p>{{ 'dashboard.active_checkouts.empty'|trans }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="list-group list-group-flush">
+                    {% for checkout in activeCheckoutsForBorrower %}
+                        {% set book = checkout.bookCopy.book %}
+                        <div class="list-group-item d-flex">
+                            {% if book.hasCover %}
+                                <img src="{{ vich_uploader_asset(book, 'cover') }}" style="max-width: 50px;" class="me-2">
+                            {% endif %}
+
+                            <div class="flex-fill">
+                                <p class="mb-1">
+                                    {{ book.title }}
+                                    <span class="badge text-bg-primary"><i class="fas fa-barcode"></i> {{ checkout.bookCopy.barcodeId }}</span>
+
+                                    {% if book.subtitle is not empty %}
+                                        <span class="text-muted d-block">{{ book.subtitle }}</span>
+                                    {% endif %}
+                                </p>
+                                <p class="mb-0">
+                                    <i class="fas fa-calendar-alt"></i> <i class="fas fa-arrow-right"></i> {{ checkout.start|format_datetime }}
+                                </p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            </div>
+        </div>
+    {% endfor %}
 
 {% endblock %}
