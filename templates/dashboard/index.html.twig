@@ -9,106 +9,116 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row row-cols-1 row-cols-sm-5 g-4 mb-4 d-none d-sm-flex">
-        <div class="col">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">{{ 'dashboard.stats.checkouts.total.label'|trans }}</h5>
-                    <p class="display-6">{{ totalCheckouts }}</p>
+    {% if is_granted('ROLE_BOOKS_ADMIN') or is_granted('ROLE_LENDER') or is_granted('ROLE_BORROWERS_ADMIN') %}
+        <div class="row row-cols-1 row-cols-sm-5 g-4 mb-4 d-none d-sm-flex">
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ 'dashboard.stats.checkouts.total.label'|trans }}</h5>
+                        <p class="display-6">{{ totalCheckouts }}</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">{{ 'dashboard.stats.checkouts.active.label'|trans }}</h5>
-                    <p class="display-6">{{ activeCheckouts }}</p>
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ 'dashboard.stats.checkouts.active.label'|trans }}</h5>
+                        <p class="display-6">{{ activeCheckouts }}</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">{{ 'dashboard.stats.borrowers.total.label'|trans }}</h5>
-                    <p class="display-6">{{ borrowersCount }}</p>
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ 'dashboard.stats.borrowers.total.label'|trans }}</h5>
+                        <p class="display-6">{{ borrowersCount }}</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">{{ 'dashboard.stats.books.total.label'|trans }}</h5>
-                    <p class="display-6">{{ booksCount }}</p>
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ 'dashboard.stats.books.total.label'|trans }}</h5>
+                        <p class="display-6">{{ booksCount }}</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">{{ 'dashboard.stats.books.copies.label'|trans }}</h5>
-                    <p class="display-6">{{ copiesCount }}</p>
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ 'dashboard.stats.books.copies.label'|trans }}</h5>
+                        <p class="display-6">{{ copiesCount }}</p>
+                    </div>
                 </div>
             </div>
         </div>
+    {% endif %}
+
+    <div class="row mb-3 g-4">
+        {% if is_granted('show-borrowers') %}
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ 'dashboard.search.user.label'|trans }}</h5>
+
+                        <form method="get" action="{{ path('borrowers') }}">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                                <input type="text" name="q" class="form-control" placeholder="{{ 'dashboard.search.user.placeholder'|trans }}">
+                                <button type="submit" class="btn btn-outline-primary">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if is_granted('ROLE_BOOKS_ADMIN') or is_granted('ROLE_LENDER') %}
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ 'dashboard.search.copy.label'|trans }}</h5>
+
+                        <form method="get" action="{{ path('dashboard_search_copy') }}">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                                <input type="text" name="q" class="form-control" placeholder="{{ 'dashboard.search.copy.placeholder'|trans }}">
+                                <button type="submit" class="btn btn-outline-primary">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if is_granted('ROLE_BOOKS_ADMIN') %}
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ 'dashboard.search.book.label'|trans }}</h5>
+
+                        <form method="get" action="{{ path('books') }}">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                                <input type="text" name="q" class="form-control" placeholder="{{ 'dashboard.search.book.placeholder'|trans }}">
+                                <button type="submit" class="btn btn-outline-primary">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     </div>
 
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 mb-3 g-4">
-        <div class="col">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">{{ 'dashboard.search.user.label'|trans }}</h5>
 
-                    <form method="get" action="{{ path('borrowers') }}">
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-barcode"></i></span>
-                            <input type="text" name="q" class="form-control" placeholder="{{ 'dashboard.search.user.placeholder'|trans }}">
-                            <button type="submit" class="btn btn-outline-primary">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">{{ 'dashboard.search.copy.label'|trans }}</h5>
-
-                    <form method="get" action="{{ path('dashboard_search_copy') }}">
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-barcode"></i></span>
-                            <input type="text" name="q" class="form-control" placeholder="{{ 'dashboard.search.copy.placeholder'|trans }}">
-                            <button type="submit" class="btn btn-outline-primary">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">{{ 'dashboard.search.book.label'|trans }}</h5>
-
-                    <form method="get" action="{{ path('books') }}">
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-barcode"></i></span>
-                            <input type="text" name="q" class="form-control" placeholder="{{ 'dashboard.search.book.placeholder'|trans }}">
-                            <button type="submit" class="btn btn-outline-primary">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 {% endblock %}

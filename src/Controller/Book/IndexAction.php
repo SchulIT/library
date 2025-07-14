@@ -11,14 +11,15 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class IndexAction extends AbstractController {
-    public function __construct(private readonly BookRepositoryInterface     $repository,
-                                private readonly BookCopyRepositoryInterface $copyRepository,
+    public function __construct(private readonly BookRepositoryInterface $repository,
                                 private readonly AvailabilityReportGenerator $availabilityReportHelper) {
 
     }
 
     #[Route('/book', name: 'books')]
     public function __invoke(Request $request): Response {
+        $this->denyAccessUnlessGranted('ROLE_BOOKS_ADMIN');
+
         $page = $request->query->getInt('page', 1);
         $limit = $request->query->getInt('limit', 25);
         $searchQuery = $request->query->get('q');

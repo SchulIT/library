@@ -29,7 +29,7 @@ class BorrowerVoter extends Voter {
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool {
-        if($attribute === self::SHOW_ANY) {
+        if($attribute === self::SHOW_ANY || $attribute === self::SHOW) {
             return $this->accessDecisionManager->decide($token, ['ROLE_LENDER']);
         }
 

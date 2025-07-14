@@ -60,13 +60,17 @@
                             </div>
 
                             <div class="ms-auto">
-                                <a href="{{ path('import_borrowers') }}" class="btn btn-outline-primary btn-sm" title="{{ 'borrowers.import.help'|trans }}">
-                                    <i class="fas fa-upload"></i> {{ 'borrowers.import.label'|trans }}
-                                </a>
+                                {% if is_granted('import-borrowers') %}
+                                    <a href="{{ path('import_borrowers') }}" class="btn btn-outline-primary btn-sm" title="{{ 'borrowers.import.help'|trans }}">
+                                        <i class="fas fa-upload"></i> {{ 'borrowers.import.label'|trans }}
+                                    </a>
+                                {% endif %}
 
-                                <a href="{{ path('add_borrower') }}" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-plus"></i> {{ 'borrowers.add.label'|trans }}
-                                </a>
+                                {% if is_granted('add-borrower') %}
+                                    <a href="{{ path('add_borrower') }}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-plus"></i> {{ 'borrowers.add.label'|trans }}
+                                    </a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -112,9 +116,13 @@
 
                                         </td>
                                         <td class="align-middle">
-                                            <a href="{{ path('show_borrower', { uuid: borrower.uuid}) }}">
+                                            {% if is_granted('show', borrower) %}
+                                                <a href="{{ path('show_borrower', { uuid: borrower.uuid}) }}">
+                                                    {{ borrower.lastname }}, {{ borrower.firstname -}}
+                                                </a>
+                                            {% else %}
                                                 {{ borrower.lastname }}, {{ borrower.firstname -}}
-                                            </a>
+                                            {% endif %}
                                         </td>
                                         <td class="align-middle">
                                             {% if borrower.grade is not empty %}
@@ -137,17 +145,23 @@
                                             {{ borrower.barcodeId }}
                                         </td>
                                         <td class="align-middle">
-                                            <a href="{{ path('show_borrower', { uuid: borrower.uuid}) }}" class="btn btn-outline-primary btn-sm" title="{{ 'actions.details'|trans }}">
-                                                <i class="fa-solid fa-magnifying-glass"></i>
-                                            </a>
+                                            {% if is_granted('show', borrower) %}
+                                                <a href="{{ path('show_borrower', { uuid: borrower.uuid}) }}" class="btn btn-outline-primary btn-sm" title="{{ 'actions.details'|trans }}">
+                                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                                </a>
+                                            {% endif %}
 
-                                            <a href="{{ path('edit_borrower', { uuid: borrower.uuid })}}" class="btn btn-outline-primary btn-sm" title="{{ 'actions.edit'|trans }}">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
+                                            {% if is_granted('edit', borrower) %}
+                                                <a href="{{ path('edit_borrower', { uuid: borrower.uuid })}}" class="btn btn-outline-primary btn-sm" title="{{ 'actions.edit'|trans }}">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                            {% endif %}
 
-                                            <a href="{{ path('remove_borrower', { uuid: borrower.uuid })}}" class="btn btn-outline-danger btn-sm" title="{{ 'actions.remove'|trans }}">
-                                                <i class="fa fa-trash"></i>
-                                            </a>
+                                            {% if is_granted('remove', borrower) %}
+                                                <a href="{{ path('remove_borrower', { uuid: borrower.uuid })}}" class="btn btn-outline-danger btn-sm" title="{{ 'actions.remove'|trans }}">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+                                            {% endif %}
                                         </td>
                                     </tr>
                                 {% endfor %}

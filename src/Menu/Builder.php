@@ -2,6 +2,7 @@
 
 namespace App\Menu;
 
+use App\Security\Voter\BookVoter;
 use App\Security\Voter\BorrowerVoter;
 use App\Security\Voter\CheckoutVoter;
 use Knp\Menu\FactoryInterface;
@@ -38,10 +39,12 @@ readonly class Builder {
         }
 
 
-        $menu->addChild('books.label', [
-            'route' => 'books'
-        ])
-            ->setExtra('icon', 'fas fa-book');
+        if($this->authorizationChecker->isGranted('ROLE_BOOKS_ADMIN')) {
+            $menu->addChild('books.label', [
+                'route' => 'books'
+            ])
+                ->setExtra('icon', 'fas fa-book');
+        }
 
         if($this->authorizationChecker->isGranted(BorrowerVoter::SHOW_ANY)) {
             $menu->addChild('borrowers.label', [

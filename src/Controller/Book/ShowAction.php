@@ -9,6 +9,7 @@ use App\Entity\Book;
 use App\Entity\BookCopy;
 use App\Form\BookCopyCreateRequestType;
 use App\Repository\BookCopyRepositoryInterface;
+use App\Security\Voter\BookVoter;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,6 +20,8 @@ class ShowAction extends AbstractController {
 
     #[Route('/book/{uuid}', name: 'show_book')]
     public function show(#[MapEntity(mapping: ['uuid' => 'uuid'])] Book $book, Request $request, BookCopyCreator $creator, BookCopyRepositoryInterface $copyRepository, CheckoutManager $checkoutManager): Response {
+        $this->denyAccessUnlessGranted(BookVoter::SHOW, $book);
+
         $createRequest = new BookCopyCreateRequest();
         $createRequest->book = $book;
         $createForm = $this->createForm(BookCopyCreateRequestType::class, $createRequest);
