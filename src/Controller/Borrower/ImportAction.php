@@ -2,6 +2,7 @@
 
 namespace App\Controller\Borrower;
 
+use App\Controller\Book\AddAction;
 use App\Form\BorrowerImportType;
 use App\Import\Borrower\CsvImporter;
 use App\Security\Voter\BorrowerVoter;
@@ -11,6 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class ImportAction extends AbstractController {
+    public function __construct(private readonly AddAction $addAction) {
+    }
+
     #[Route('/borrower/import', name: 'import_borrowers')]
     public function __invoke(Request $request, CsvImporter $csvImporter): Response {
         $this->denyAccessUnlessGranted(BorrowerVoter::IMPORT);
@@ -25,6 +29,9 @@ class ImportAction extends AbstractController {
             $delete = $form->get('delete')->getData();
 
             $csvImporter->importCsv($file, $type, $delimiter, $delete);
+            $this->addFlash('success', 'borrowers.add.success');
+
+            return $this->redirectToRoute('borrowers');
         }
 
         return $this->render('borrowers/import.html.twig', [
